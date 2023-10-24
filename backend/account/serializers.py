@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 
 class SignUpSerializer(serializers.ModelSerializer):
-    class Mets:
+    class Meta:
         model = User
         fields = ('first_name','last_name','email','password')
         extra_kwargs = {
