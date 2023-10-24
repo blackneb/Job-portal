@@ -117,13 +117,14 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PERMISSION_CLASSES': ( 'rest_framework.permissions.IsAdminUser' ),
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
     'AUTH_HEADER_TYPES': ('Bearer'),
-    'AUTH_TOKEN_CLASSES':('rest_framework_simplejwt.tokens.AccessToken')
+    'AUTH_TOKEN_CLASSES':('rest_framework_simplejwt.tokens.AccessToken',),
 
 }
 
