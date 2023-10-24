@@ -8,7 +8,8 @@ from django.db.models import Avg, Count, Min, Max
 from rest_framework.pagination import PageNumberPagination
 
 from django.contrib.auth.hashers import make_password
-from .serializers import SignUpSerializer, UserSerializer
+from .serializers import SignUpSerializer, UserSerializer, UploadResumeSerializer
+from .models import Resume
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
@@ -62,3 +63,42 @@ def updateUser(request):
     user.save()
     serializer = UserSerializer(user, many=False)
     return Response(serializer.data)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def uploadResume(request):
+    file_obj = request.data.get('resume')
+    user = UserSerializer(request.user)
+    username = user.data['username']
+    if Resume.objects.filter(name=username).exists():
+        return Response({
+            'message': 'Resume has been uploaded'
+        },
+        status=status.HTTP_400_BAD_REQUEST)
+
+    if not file_obj:
+        return Response({'error': 'Resume is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    file_instance = Resume.objects.create(name=username, file=file_obj)
+    file_instance.save()
+
+    serializer = UploadResumeSerializer(file_instance)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+
+
+# def uploadResume(request):
+#     user = request.user
+#     resume = request.FILES['resume']
+
+#     if resume == '':
+#         return Response({
+#             'error': 'Please Upload your resume.'
+#         })
+    
+#     user.userprofile.resume = resume
+#     user.userprofile.save()
+#     serializer = UserSerializer(user, many=False)
+#     return Response(serializer.data)
