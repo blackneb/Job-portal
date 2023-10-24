@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import Job
 from .serializers import JobsSerializer
@@ -8,6 +8,7 @@ from rest_framework import status
 from django.db.models import Avg, Count, Min, Max
 from .filters import JobsFilter
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 @api_view(['GET'])
@@ -29,13 +30,16 @@ def getAllJobs(request):
         })
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getJob(request,pk):
     job = get_object_or_404(Job,id=pk)
     serializer = JobsSerializer(job, many=False)
     return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def newJob(request):
+    request.data['user'] = request.user
     data = request.data
     serializer = JobsSerializer(data=data)
     if(serializer.is_valid()):
@@ -44,8 +48,15 @@ def newJob(request):
     return Response(serializer.error)
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def updateJob(request,pk):
     job = get_object_or_404(Job, id=pk)
+    if job.user != request.user:
+        return Response({
+            'message':'You can not update this job'
+        },
+        status=status.HTTP_403_FORBIDDEN
+        )
     job.title = request.data['title']
     job.description = request.data['description']
     job.email = request.data['email']
@@ -63,12 +74,20 @@ def updateJob(request,pk):
     
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def deleteJob(request, pk):
     job = get_object_or_404(Job, id=pk)
+    if job.user != request.user:
+        return Response({
+            'message':'You can not delete this job'
+        },
+        status=status.HTTP_403_FORBIDDEN
+        )
     job.delete()
     return Response({'message': 'Job is deleted'}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getTopicStatus(request,topic):
     args = { 'title__icontains':topic }
     jobs = Job.objects.filter(**args)
