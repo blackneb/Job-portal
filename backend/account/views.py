@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.db.models import Avg, Count, Min, Max
 from rest_framework.pagination import PageNumberPagination
+import json
 
 from django.contrib.auth.hashers import make_password
 from .serializers import SignUpSerializer, UserSerializer, UploadResumeSerializer
@@ -44,9 +45,17 @@ def register(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def currentUser(request):
-    user =UserSerializer(request.user)
-
-    return Response(user.data)
+    user = UserSerializer(request.user)
+    resume = Resume.objects.all()
+    resumeserializer = UploadResumeSerializer(resume, many=True)
+    username = user.data['username']
+    user_data = user.data
+    if Resume.objects.filter(name=username).exists():
+        resume_data = [item["file"] for item in resumeserializer.data if item["name"] == "anteneh15@gmail.com"]
+        user_data['resume'] = resume_data[0]
+    else:
+        user_data['resume'] = ''
+    return Response(user_data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -67,9 +76,10 @@ def updateUser(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def uploadResume(request):
-    file_obj = request.data.get('resume')
     user = UserSerializer(request.user)
+    file_obj = request.data.get('resume')
     username = user.data['username']
+    print(username)
     if Resume.objects.filter(name=username).exists():
         return Response({
             'message': 'Resume has been uploaded'
