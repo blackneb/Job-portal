@@ -1,14 +1,18 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .models import Job
-from .serializers import JobsSerializer
+from .models import Job, CandinatesApplied
+from .serializers import JobsSerializer, CandinatesAppliedSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.db.models import Avg, Count, Min, Max
 from .filters import JobsFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
+from account.models import Resume
+from account.serializers import UploadResumeSerializer, UserSerializer
+
 # Create your views here.
 
 @api_view(['GET'])
@@ -101,3 +105,47 @@ def getTopicStatus(request,topic):
         max_salary = Max("salary"),
     )
     return Response(stats)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def applyToJob(request,pk):
+    user = request.user
+    job = get_object_or_404(Job, id=pk)
+    mainuser = UserSerializer(request.user)
+    username = mainuser.data['username']
+    resume = Resume.objects.all()
+    resumeserializer = UploadResumeSerializer(resume, many=True)
+    if not Resume.objects.filter(name=username).exists():
+        return Response({
+            'error': 'please upload your resume'
+        },
+        status=status.HTTP_400_BAD_REQUEST
+        )
+    if job.lastDate < timezone.now():
+        return Response({
+            'error': 'You can not apply to this job. The Job is expired'
+        },
+        status=status.HTTP_400_BAD_REQUEST
+        )
+    alreadyApplied = CandinatesApplied.objects.filter(job_id=job.id, user_id = user.id).exists()
+    if alreadyApplied:
+        return Response({
+            'error': 'You have already applied to this job'
+        },
+        status=status.HTTP_400_BAD_REQUEST
+        )
+
+    resume_data = [item["file"] for item in resumeserializer.data if item["name"] == username]
+    jobApplied = CandinatesApplied.objects.create(
+        job = job,
+        user = user,
+        resume = resume_data[0]
+    )
+    return Response({
+        'applied': True,
+        'jobId': jobApplied.id
+    },
+    status=status.HTTP_200_OK
+    )
+

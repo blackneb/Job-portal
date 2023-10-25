@@ -51,7 +51,7 @@ def currentUser(request):
     username = user.data['username']
     user_data = user.data
     if Resume.objects.filter(name=username).exists():
-        resume_data = [item["file"] for item in resumeserializer.data if item["name"] == "anteneh15@gmail.com"]
+        resume_data = [item["file"] for item in resumeserializer.data if item["name"] == username]
         user_data['resume'] = resume_data[0]
     else:
         user_data['resume'] = ''
