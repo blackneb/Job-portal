@@ -10,5 +10,7 @@ urlpatterns = [
     path('stats/<str:topic>/', views.getTopicStatus, name='topicstatus'),
     path('jobs/<str:pk>/apply/', views.applyToJob, name='apply_to_job'),
     path('me/jobs/applied/', views.getCurrentUserAppliedJobs, name='current_user_applied_jobs'),
-    path('jobs/<str:pk>/check/', views.isApplied, name='is_applied')
+    path('jobs/<str:pk>/check/', views.isApplied, name='is_applied'),
+    path('me/jobs/', views.getCurrentUserJobs, name='get_current_user_jobs'),
+    path('jobs/<str:pk>/candinates',views.getCandinatedApplied,name='get_candinates_applied')
 ]

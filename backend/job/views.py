@@ -164,3 +164,27 @@ def isApplied(request, pk):
     job = get_object_or_404(Job, id=pk)
     applied = CandinatesApplied.objects.filter(job_id=job.id, user_id = user.id).exists()
     return Response(applied)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getCurrentUserJobs(request):
+    args = { 'user': request.user.id}
+    jobs = Job.objects.filter(**args)
+    serializer = JobsSerializer(jobs,many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getCandinatedApplied(request, pk):
+    user = request.user
+    job = get_object_or_404(Job, id=pk)
+    if job.user != user:
+        return Response({
+            'error':'You can not access this job'
+        },
+        status=status.HTTP_403_FORBIDDEN
+        )
+    jobs = CandinatesApplied.objects.all()
+    serializer = CandinatesAppliedSerializer(jobs, many=True)
+    filtered = [item for item in serializer.data if item["job"]["id"] == int(pk)]
+    return Response(filtered)
