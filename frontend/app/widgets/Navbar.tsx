@@ -2,6 +2,10 @@
 import React from 'react'
 import { useState } from 'react';
 import { Dropdown, Menu, Avatar, Input, Button } from 'antd';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+
+
 
 const { Search } = Input;
 
@@ -24,6 +28,8 @@ const Navbar = () => {
         <Menu>
           <Menu.Item>
             <a href="/my-jobs">
+                <Link href={""}>
+                </Link>
                 <div className='flex flex-row'>
                     <SolutionOutlined />
                     <p className='ml-2'>My Jobs</p>
@@ -41,10 +47,12 @@ const Navbar = () => {
           <Menu.Divider />
           <Menu.Item>
             <a href="/profile">
-                <div className='flex flex-row'>
-                    <UserOutlined />
-                    <p className='ml-2'>Profile</p>
-                </div>
+                <Link href={"/profile"}>
+                    <div className='flex flex-row'>
+                        <UserOutlined />
+                        <p className='ml-2'>Profile</p>
+                    </div>
+                </Link>
             </a>
           </Menu.Item>
           <Menu.Item>
