@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import StyledComponentsRegistry from '@/lib/AntdRegistry'
 import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({
         <StyledComponentsRegistry>
           <Navbar/>
           {children}
+          <Footer/>
         </StyledComponentsRegistry>
       </body>
     </html>

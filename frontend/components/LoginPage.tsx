@@ -54,6 +54,7 @@ const LoginPage = () => {
                         <Button
                         htmlType="submit"
                         className="login-form-button"
+                        style={{backgroundColor:'blue', color:'white' }}
                         >
                         Log in
                         </Button>
