@@ -4,7 +4,7 @@ import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-import { user_profile } from '@/store/Actions';
+import { user_profile, user_authenticated } from '@/store/Actions';
 const LoginPage = () => {
     const dispatch = useDispatch()
     const onFinish = async (values:any) => {
@@ -21,6 +21,10 @@ const LoginPage = () => {
                   })
                 console.log(res.data)
                 dispatch(user_profile(res.data))
+                const isauthjson = {
+                    isAuth:'True',
+                }
+                dispatch(user_authenticated(isauthjson))
             }
             catch(error){
                 console.log("unable to login")

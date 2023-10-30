@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { userProfileReducers } from "./Reducer";
+import { userProfileReducers, userAuthReducers } from "./Reducer";
 
 export function makeStore() {
   return configureStore({
     reducer: {
       userProfile: userProfileReducers,
+      userAuth:userAuthReducers,
     },
   });
 }
