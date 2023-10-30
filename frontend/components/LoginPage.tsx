@@ -2,10 +2,29 @@
 import React from 'react'
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const LoginPage = () => {
-    const onFinish = (values:any) => {
+    const onFinish = async (values:any) => {
         console.log('Received values of form: ', values);
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/token/', values);
+            console.log('Access token: ',response.data.access);
+            try{
+                const res = await axios.get('http://127.0.0.1:8000/api/me/',{
+                    headers: {
+                      Authorization: `Bearer ${response.data.access}`,
+                      'Content-Type': 'application/json',
+                    },
+                  })
+                console.log(res.data)
+            }
+            catch(error){
+                console.log("unable to login")
+            }
+          } catch (error) {
+            console.log("Unable to login");
+          }
       };
   
   return (
@@ -29,6 +48,7 @@ const LoginPage = () => {
                     name="login-form"
                     className="login-form"
                     initialValues={{ remember: true }}
+                    onFinish={onFinish}
                     >
                     <Form.Item
                         name="username"
