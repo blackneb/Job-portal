@@ -3,8 +3,10 @@ import React from 'react'
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import axios from 'axios';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { user_profile } from '@/store/Actions';
 const LoginPage = () => {
+    const dispatch = useDispatch()
     const onFinish = async (values:any) => {
         console.log('Received values of form: ', values);
         try {
@@ -18,6 +20,7 @@ const LoginPage = () => {
                     },
                   })
                 console.log(res.data)
+                dispatch(user_profile(res.data))
             }
             catch(error){
                 console.log("unable to login")

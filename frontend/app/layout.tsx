@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import StyledComponentsRegistry from '@/lib/AntdRegistry'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { Providers } from '@/store/StoreProvider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -17,14 +18,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <StyledComponentsRegistry>
-          <Navbar/>
-          {children}
-          <Footer/>
-        </StyledComponentsRegistry>
-      </body>
-    </html>
+    <Providers>
+      <html lang="en">
+        <body className={inter.className}>
+          <StyledComponentsRegistry>
+            <Navbar/>
+            {children}
+            <Footer/>
+          </StyledComponentsRegistry>
+        </body>
+      </html>
+    </Providers>
+    
   )
 }
