@@ -3,12 +3,14 @@ import React from 'react'
 import { Form, Input, Button, Upload } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { UploadOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 
 const UploadResume = () => {
     const onFinish = (values:any) => {
         console.log('Received values of form: ', values);
       };
+    const userProfile = useSelector((state:any) => state.userProfile)
   return (
     <section className="h-screen flex align-center items-center justify-center">
     <div className="container w-3/4 px-6 py-24 ">

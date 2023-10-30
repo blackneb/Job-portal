@@ -1,13 +1,49 @@
 "use client";
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { user_profile, user_authenticated } from '@/store/Actions';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation'
+import { notification } from 'antd';
+import { useCookies } from "react-cookie"
+
+
+
 const LoginPage = () => {
     const dispatch = useDispatch()
+    const [cookie, setCookie] = useCookies(["userAccessKey"])
+    const router = useRouter()
+    const [loading, setLoading] = useState(false);
+    async function checkUser() {
+        if(cookie){
+            try{
+                const res = await axios.get('http://127.0.0.1:8000/api/me/',{
+                    headers: {
+                      Authorization: `Bearer ${cookie.userAccessKey}`,
+                      'Content-Type': 'application/json',
+                    },
+                  })
+                console.log(res.data)
+                dispatch(user_profile(res.data))
+                const isauthjson = {
+                    isAuth:'True',
+                }
+                dispatch(user_authenticated(isauthjson))
+                router.push('/profile')
+            }
+            catch(error){
+                console.log("unable to login")
+            }
+        }
+    }
+    useEffect(() => {
+        checkUser();
+    }, [])    
     const onFinish = async (values:any) => {
+        setLoading(true)
         console.log('Received values of form: ', values);
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/token/', values);
@@ -19,19 +55,40 @@ const LoginPage = () => {
                       'Content-Type': 'application/json',
                     },
                   })
+                  setCookie("userAccessKey", response.data.access, {
+                    path: "/",
+                    maxAge: 3600,
+                    sameSite: true,
+                    })
                 console.log(res.data)
                 dispatch(user_profile(res.data))
                 const isauthjson = {
                     isAuth:'True',
                 }
                 dispatch(user_authenticated(isauthjson))
+                router.push('/profile')
             }
             catch(error){
                 console.log("unable to login")
+                notification.error({
+                    message: 'Login Failed!',
+                    duration: 5,
+                    onClose: () => {
+                      console.log('Notification closed');
+                    },
+                  });
             }
           } catch (error) {
             console.log("Unable to login");
+            notification.error({
+                message: 'Login Failed!',
+                duration: 5,
+                onClose: () => {
+                  console.log('Notification closed');
+                },
+              });
           }
+          setLoading(false)
       };
   
   return (
@@ -78,16 +135,33 @@ const LoginPage = () => {
                     </Form.Item>
                     
                     <Form.Item className='flex justify-center'>
-                        <Button
-                        htmlType="submit"
-                        className="login-form-button"
-                        style={{backgroundColor:'blue', color:'white' }}
-                        >
-                        Log in
+                    {loading ? (
+                        <Button 
+                            type="primary" 
+                            htmlType="submit"
+                            className="login-form-button"
+                            style={{backgroundColor:'blue', color:'white' }}
+                            loading>
+                        Loading
                         </Button>
+                    ) : (
+                        <Button 
+                            type="primary" 
+                            htmlType="submit"
+                            className="login-form-button"
+                            style={{backgroundColor:'blue', color:'white' }} 
+                        >
+                        Login
+                        </Button>
+                    )}
                     </Form.Item>
                 </Form>
-            </div>            
+            </div> 
+                <div className='flex justify-center'>
+                    <p style={{ textDecoration: "none" }} className="signup">
+                        New to Platform? <Link href="/signup">Create an account</Link>
+                    </p>
+                </div>           
         </div>
         </div>
     </div>

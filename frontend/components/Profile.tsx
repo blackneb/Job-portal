@@ -2,11 +2,13 @@
 import React from 'react'
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux'; 
 
 const Profile = () => {
     const onFinish = (values:any) => {
         console.log('Received values of form: ', values);
       };
+    const userProfile = useSelector((state:any) => state.userProfile)
   return (
     <section className="h-screen flex align-center items-center justify-center">
     <div className="container w-3/4 px-6 py-24 ">
@@ -28,10 +30,12 @@ const Profile = () => {
                     name="login-form"
                     className="login-form"
                     initialValues={{ remember: true }}
+                    onFinish={onFinish}
                     >
                     <Form.Item
                         name="firstname"
                         style={{ width: 300 }}
+                        initialValue={userProfile.first_name}
                         rules={[{ required: true, message: 'Please input your first name!' }]}
                     >
                         <Input prefix={<UserOutlined />} placeholder="first name" />
@@ -40,12 +44,14 @@ const Profile = () => {
                     <Form.Item
                         name="lastname"
                         style={{ width: 300 }}
+                        initialValue={userProfile.last_name}
                         rules={[{ required: true, message: 'Please input your last name!' }]}
                     >
                         <Input prefix={<UserOutlined />} placeholder="Last name" />
                     </Form.Item>
 
                     <Form.Item
+                        initialValue={userProfile.email}
                         name="email"
                         style={{ width: 300 }}
                         rules={[{ required: true, message: 'Please input your email!' }]}
