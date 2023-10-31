@@ -34,6 +34,12 @@ def getAllJobs(request):
         })
 
 @api_view(['GET'])
+def allJobs(request):
+    job = Job.objects.all()    
+    serializer = JobsSerializer(job, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getJob(request,pk):
     job = get_object_or_404(Job,id=pk)

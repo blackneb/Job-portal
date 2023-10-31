@@ -3,6 +3,7 @@ from .import views
 
 urlpatterns = [
     path('jobs/', views.getAllJobs, name='jobs'),
+    path('alljobs/', views.allJobs, name="all_jobs"),
     path('jobs/<str:pk>/', views.getJob, name='job'),
     path('newjob/', views.newJob, name='newjob'),
     path('updatejob/<str:pk>/', views.updateJob, name='updatejob'),
