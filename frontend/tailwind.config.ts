@@ -16,8 +16,13 @@ const config: Config = {
       width: {
         '256': '48rem',
       },
+      height: {
+        '256': '64rem',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
 }
 export default config

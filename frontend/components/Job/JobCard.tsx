@@ -28,7 +28,7 @@ const JobCard = ({ companyName, jobTitle, description, industry, type, salary, e
         </div>
         <div className="mb-2 flex flex-row">
             <Image src="/salary.png" alt="Icon" width={20} height={10} />
-            <p className='ml-2 text-sm'>{salary}</p>
+            <p className='ml-2 text-sm'>{salary} Birr</p>
         </div>
         <div className="mb-2 flex flex-row">
             <Image src="/time.png" alt="Icon" width={20} height={10} />
