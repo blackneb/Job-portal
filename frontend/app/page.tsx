@@ -2,6 +2,7 @@
 import React, { useState,useEffect } from "react"
 import JobCard from "@/components/Job/JobCard"
 import axios from "axios"
+import FilterComponent from "@/components/FilterComponent";
 export default function Home() {
   const [data, setData] = useState([]);
   async function getJobs(){
@@ -18,14 +19,17 @@ export default function Home() {
     getJobs()
   }, [])
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-row justify-evenly">
+      <div>
+        <FilterComponent/>
+      </div>
     {
       data.length === 0? (
       <>
         Loading...
       </>
       ) : (
-      <>
+      <div className="flex flex-col justify-center">
         {
           data.map((job:any) => (
             <JobCard
@@ -40,7 +44,7 @@ export default function Home() {
             />
           ))
         }
-      </>
+      </div>
       )
     }
       
