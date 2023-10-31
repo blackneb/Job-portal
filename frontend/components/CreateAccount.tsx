@@ -1,11 +1,49 @@
 "use client";
-import React from 'react'
+import React, { useState } from 'react'
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { notification } from 'antd';
+import axios from 'axios';
 
 const CreateAccount = () => {
-    const onFinish = (values:any) => {
+    const [loading, setLoading] = useState(false);
+    const onFinish = async (values:any) => {
+        setLoading(true)
         console.log('Received values of form: ', values);
+        if( values.password != values.confirmpassword){
+            notification.error({
+                message: 'Passwords must be same!',
+                duration: 5,
+                onClose: () => {
+                  console.log('Notification closed');
+                },
+              });
+        }
+        else{
+            try{
+                const response = await axios.post("http://127.0.0.1:8000/api/register/",values)
+                console.log(response.data)
+                if (response.data.error === "User already exists"){
+                    notification.error({
+                        message: 'User Already Exists!',
+                        duration: 5,
+                        onClose: () => {
+                          console.log('Notification closed');
+                        },
+                      });
+                }
+            }
+            catch(error){
+                notification.error({
+                    message: 'Failed to Create Account!',
+                    duration: 5,
+                    onClose: () => {
+                      console.log('Notification closed');
+                    },
+                  });
+            }
+        }
+        setLoading(false)
       };
   return (
     <section className="h-screen flex align-center items-center justify-center">
@@ -28,9 +66,10 @@ const CreateAccount = () => {
                     name="login-form"
                     className="login-form"
                     initialValues={{ remember: true }}
+                    onFinish={onFinish}
                     >
                     <Form.Item
-                        name="firstname"
+                        name="first_name"
                         style={{ width: 300 }}
                         rules={[{ required: true, message: 'Please input your first name!' }]}
                     >
@@ -38,7 +77,7 @@ const CreateAccount = () => {
                     </Form.Item>
 
                     <Form.Item
-                        name="lastname"
+                        name="last_name"
                         style={{ width: 300 }}
                         rules={[{ required: true, message: 'Please input your last name!' }]}
                     >
@@ -77,12 +116,25 @@ const CreateAccount = () => {
                     </Form.Item>
                     
                     <Form.Item className='flex justify-center'>
-                        <Button
-                        htmlType="submit"
-                        className="login-form-button"
+                    {loading ? (
+                        <Button 
+                            type="primary" 
+                            htmlType="submit"
+                            className="login-form-button"
+                            style={{backgroundColor:'blue', color:'white' }}
+                            loading>
+                        Signing up
+                        </Button>
+                    ) : (
+                        <Button 
+                            type="primary" 
+                            htmlType="submit"
+                            className="login-form-button"
+                            style={{backgroundColor:'blue', color:'white' }} 
                         >
                         Sign Up
                         </Button>
+                    )}
                     </Form.Item>
                 </Form>
             </div>            
