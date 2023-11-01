@@ -10,7 +10,7 @@ import os
 
 # Create your models here.
 class JobType(models.TextChoices):
-    Permanent = 'permanent'
+    Permanent = 'Permanent'
     Temporary = 'Temporary'
     Internship = 'Internship'
 

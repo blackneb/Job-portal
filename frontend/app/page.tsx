@@ -7,11 +7,18 @@ import { Checkbox, Col, Row } from 'antd';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 export default function Home() {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([])
+  const [selectedJobtypes, setSelectedJobtypes] = useState<CheckboxValueType[]>([]);
+  const [selectedEducation, setSelectedEducation] = useState<CheckboxValueType[]>([]);
   const onChangeType = (checkedValues: CheckboxValueType[]) => {
     console.log('checked Types = ', checkedValues);
+    setSelectedJobtypes(checkedValues)
+    filteredJobs
   };
   const onChangeEducation = (checkedValues: CheckboxValueType[]) => {
     console.log('checked Education = ', checkedValues);
+    setSelectedEducation(checkedValues)
+    filteredJobs
   };
   const onChangeTypeExperience = (checkedValues: CheckboxValueType[]) => {
     console.log('checked Experience = ', checkedValues);
@@ -19,11 +26,21 @@ export default function Home() {
   const onChangeTypeSalary = (checkedValues: CheckboxValueType[]) => {
     console.log('checked Salary = ', checkedValues);
   };
+  const filteredJobs = data.filter((job:any) => {
+    if (selectedJobtypes.length > 0 && !selectedJobtypes.includes(job.jobType)) {
+      return false;
+    }
+    if (selectedEducation.length > 0 && !selectedEducation.includes(job.education)) {
+      return false;
+    }
+    return true;
+  });
   async function getJobs(){
     try{
       const response = await axios.get("http://127.0.0.1:8000/api/alljobs/")
       console.log(response.data)
       setData(response.data)
+      setFilteredData(response.data)
     }
     catch(error){
       console.log(error)
@@ -90,7 +107,7 @@ export default function Home() {
         <div className="flex flex-col mt-4 justify-center h-screen scrollbar-thin scrollbar-thumb-black scrollbar-track-White overflow-y-scroll hover:scrollbar-thumb-black">
         <div className="mt-4">
           {
-            data.map((job:any) => (
+            filteredJobs.map((job:any) => (
               <JobCard
                   key={job.id}
                   companyName={job.company}
