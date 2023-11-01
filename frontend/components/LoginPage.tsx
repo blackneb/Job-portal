@@ -32,7 +32,7 @@ const LoginPage = () => {
                     isAuth:'True',
                 }
                 dispatch(user_authenticated(isauthjson))
-                router.push('/profile')
+                router.push('/')
             }
             catch(error){
                 console.log("unable to login")
@@ -66,7 +66,7 @@ const LoginPage = () => {
                     isAuth:'True',
                 }
                 dispatch(user_authenticated(isauthjson))
-                router.push('/profile')
+                router.push('/')
             }
             catch(error){
                 console.log("unable to login")
