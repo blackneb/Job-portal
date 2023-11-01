@@ -5,6 +5,9 @@ import axios from "axios"
 import { Divider } from 'antd';
 import { Checkbox, Col, Row } from 'antd';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
+import Image from 'next/image'
+
+
 export default function Home() {
   const [data, setData] = useState([]);
   const [selectedJobtypes, setSelectedJobtypes] = useState<CheckboxValueType[]>([]);
@@ -128,12 +131,13 @@ export default function Home() {
         <div className="shadow-md rounded ml-4 my-4">
           <p className="ml-4 font-semibold">Latest Jobs</p>
         </div>
-        <div className="flex flex-col mt-4 h-screen scrollbar-thin scrollbar-thumb-black scrollbar-track-White overflow-y-scroll hover:scrollbar-thumb-black">
+        <div className="flex flex-col items-center mt-4 h-screen scrollbar-thin scrollbar-thumb-black scrollbar-track-White overflow-y-scroll hover:scrollbar-thumb-black">
         <div className="mt-4">
           {
             filteredJobs.length === 0? (
             <>
-              <p>No jobs on this filter</p>
+              <Image src="/sad.png" alt="Icon" width={300} height={150} />
+              <p className="item-center m-8 font-bold text-gray-500">Sorry, we couldn’t find any match</p>
             </>
             ):
             (
