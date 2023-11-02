@@ -1,9 +1,13 @@
 "use client";
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Form, Input, Button, Select } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import axios from 'axios';
 const { TextArea } = Input
 const PostAJob = () => {
+    async function postData(){
+        const response = await axios.post("");
+    }
     const onFinish = (values:any) => {
         console.log('Received values of form: ', values);
       };
