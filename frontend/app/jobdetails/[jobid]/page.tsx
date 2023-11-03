@@ -6,16 +6,16 @@ import { useRouter } from 'next/navigation'
 
 const page = ({params}:any) => {
   const router = useRouter()
-  const isAuth = useSelector((state:any) => state.isAuth)
+  const isAuth = useSelector((state:any) => state.userAuth)
   useEffect(() => {
-    if (!isAuth){
+    if (!isAuth.isAuth){
       router.push('/login')
     }
   }, [])
   return (
     <div className='flex items-center justify-center'>
       {
-        isAuth? (
+        isAuth.isAuth? (
         <>
           <JobDetail id={params.jobid}/>
         </>
