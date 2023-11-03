@@ -51,11 +51,9 @@ def getJob(request,pk):
 def newJob(request):
     request.data['user'] = request.user
     data = request.data
-    serializer = JobsSerializer(data=data)
-    if(serializer.is_valid()):
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.error)
+    job = Job.objects.create(**data)
+    serializer = JobsSerializer(job, many=False)
+    return Response(serializer.data)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
