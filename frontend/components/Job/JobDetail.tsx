@@ -1,9 +1,9 @@
 'use client'
 import React, { useState,useEffect } from 'react'
 import Image from 'next/image'
-import { Button, Descriptions } from 'antd'
+import { Button, Descriptions, notification } from 'antd'
 import type { DescriptionsProps } from 'antd';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useCookies } from "react-cookie"
 
 interface jobInterface {
@@ -30,7 +30,38 @@ const JobDetail = ({id}:any) => {
     const [items, setItems] = useState<DescriptionsProps['items']>([])
     const [more, setMore] = useState<DescriptionsProps['items']>([])
     const [loading, setLoading] = useState(true)
+    const url = "http://127.0.0.1:8000/api/jobs/" + id + "/apply/"
+    const applyJob = async() => {
+        console.log(cookie.userAccessKey)
+        try{
+            const response = await axios.post(url, {},{
+                headers: {
+                  Authorization: `Bearer ${cookie.userAccessKey}`,
+                  'Content-Type': 'application/json',
+                },
+              })
+              console.log(response.data)
+              notification.success({
+                message: "Applied",
+                duration: 5,
+                onClose: () => {
+                  console.log('Notification closed');
+                },
+              });
+        }
+        catch(error:any){
+            console.log(error.response)
+            notification.error({
+                message: error.response.data.error,
+                duration: 5,
+                onClose: () => {
+                  console.log('Notification closed');
+                },
+              });
+        }
+    }
     async function getJobDetails(){
+        console.log(cookie.userAccessKey)
         try{
             const response = await axios.get(`http://127.0.0.1:8000/api/jobs/${id}`,{
                     headers: {
@@ -135,6 +166,7 @@ const JobDetail = ({id}:any) => {
                             htmlType="submit"
                             className="login-form-button"
                             style={{backgroundColor:'blue', color:'white' }} 
+                            onClick={applyJob}
                         >
                         Apply
                         </Button>
