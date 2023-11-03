@@ -1,7 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
-const JobCard = ({ companyName, jobTitle, description, industry, type, salary, expireDate }:any) => {
+const JobCard = ({jobId, companyName, jobTitle, description, industry, type, salary, expireDate }:any) => {
+  const link = "/jobdetails/" + jobId
   return (
     <div className="w-[48rem] rounded overflow-hidden shadow-lg bg-white m-4">
       <div className="px-6 py-4">
@@ -9,10 +11,12 @@ const JobCard = ({ companyName, jobTitle, description, industry, type, salary, e
             <Image src="/company.png" alt="Icon" width={20} height={10} />
             <p className='ml-2 text-gray-500'>{companyName}</p>
         </div>
-        <div className="mb-2 flex flex-row">
+        <Link href={link}>
+          <div className="mb-2 flex flex-row">
             <Image src="/tag.png" alt="Icon" width={20} height={10} />
             <p className='ml-2'>{jobTitle}</p>
-        </div>
+          </div>
+        </Link>
         <div className="mb-2 flex flex-row">
             <p className='ml-2 text-xs'>{description.slice(0,240)}...</p>
         </div>

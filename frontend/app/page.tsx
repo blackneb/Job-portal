@@ -146,6 +146,7 @@ export default function Home() {
               filteredJobs.map((job:any) => (
                 <JobCard
                     key={job.id}
+                    jobId={job.id}
                     companyName={job.company}
                     jobTitle={job.title}
                     description={job.description}
