@@ -50,7 +50,7 @@ const Navbar = () => {
         </Link>
       </Menu.Item>
       <Menu.Item>
-          <Link href="/jobsapplied">
+          <Link href="/myapplications">
             <div className='flex flex-row'>
                 <UserOutlined />
                 <p className='ml-2'>Jobs Applied</p>
