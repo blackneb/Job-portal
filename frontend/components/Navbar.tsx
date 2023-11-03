@@ -1,8 +1,11 @@
 'use client'
 import React from 'react'
 import { Input, Button, Menu, Avatar, Dropdown, Space } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { user_authenticated } from '@/store/Actions';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'
+import { useCookies } from "react-cookie"
 import {
   UserOutlined,
   LogoutOutlined,
@@ -15,8 +18,19 @@ const { Search } = Input;
 
 
 const Navbar = () => {
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const [cookie, setCookie, removeCookie] = useCookies(["userAccessKey"])
   const isAuth = useSelector((state:any) => state.userAuth)
   console.log(isAuth.isAuth)
+  const logout = () => {
+    const isauthjson = {
+      isAuth:'False',
+  }
+    dispatch(user_authenticated(isauthjson))
+    removeCookie("userAccessKey");
+    window.location.reload();
+  }
   const menu = (
     <Menu>
       <Menu.Item>
@@ -62,12 +76,10 @@ const Navbar = () => {
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item>
-          <Link href="logout">
-            <div className='flex flex-row'>
+            <div className='flex flex-row' onClick={logout}>
                 <LogoutOutlined />
                 <p className='ml-2'>Logout</p>
             </div>
-          </Link>
       </Menu.Item>
     </Menu>
   );

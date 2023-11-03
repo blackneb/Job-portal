@@ -27,7 +27,7 @@ export default function Home() {
   const isAuth = useSelector((state:any) => state.isAuth)
   async function checkUser() {
     console.log("Cookie" + cookie.userAccessKey)
-    if(cookie.userAccessKey === "undefined"){
+    if(cookie.userAccessKey !== "undefined"){
         try{
             const res = await axios.get('http://127.0.0.1:8000/api/me/',{
                 headers: {
