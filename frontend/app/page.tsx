@@ -6,14 +6,50 @@ import { Divider } from 'antd';
 import { Checkbox, Col, Row } from 'antd';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import Image from 'next/image'
+import { useCookies } from "react-cookie"
+import { useSelector, useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation'
+import { user_profile, user_authenticated } from '@/store/Actions';
+
+
+
 
 
 export default function Home() {
   const [data, setData] = useState([]);
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const [cookie, setCookie] = useCookies(["userAccessKey"])
   const [selectedJobtypes, setSelectedJobtypes] = useState<CheckboxValueType[]>([]);
   const [selectedEducation, setSelectedEducation] = useState<CheckboxValueType[]>([]);
   const [selectedExperience, setSelectedExperience] = useState<CheckboxValueType[]>([]);
   const [selectedSalary, setSelectedSalary] = useState<CheckboxValueType[]>([]);
+  const isAuth = useSelector((state:any) => state.isAuth)
+  async function checkUser() {
+    console.log("Cookie" + cookie.userAccessKey)
+    if(cookie.userAccessKey === "undefined"){
+        try{
+            const res = await axios.get('http://127.0.0.1:8000/api/me/',{
+                headers: {
+                  Authorization: `Bearer ${cookie.userAccessKey}`,
+                  'Content-Type': 'application/json',
+                },
+              })
+            console.log(res.data)
+            dispatch(user_profile(res.data))
+            const isauthjson = {
+                isAuth:'True',
+            }
+            dispatch(user_authenticated(isauthjson))
+        }
+        catch(error){
+            console.log("unable to login")
+        }
+    }
+    else{
+      router.push('/')
+    }
+}
   const onChangeType = (checkedValues: CheckboxValueType[]) => {
     console.log('checked Types = ', checkedValues);
     setSelectedJobtypes(checkedValues)
@@ -71,6 +107,7 @@ export default function Home() {
     }
   }
   useEffect(() => {
+    checkUser()
     getJobs()
   }, [])
   return (
