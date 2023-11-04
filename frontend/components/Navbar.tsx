@@ -13,6 +13,7 @@ import {
   UploadOutlined,
   SolutionOutlined,
   SearchOutlined,
+  LineChartOutlined,
 } from '@ant-design/icons';
 const { Search } = Input;
 
@@ -54,6 +55,14 @@ const Navbar = () => {
             <div className='flex flex-row'>
                 <UserOutlined />
                 <p className='ml-2'>Jobs Applied</p>
+            </div>
+          </Link>
+      </Menu.Item>
+      <Menu.Item>
+          <Link href="/stattopic">
+            <div className='flex flex-row'>
+                <LineChartOutlined />
+                <p className='ml-2'>Get Stat</p>
             </div>
           </Link>
       </Menu.Item>

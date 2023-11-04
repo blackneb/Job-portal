@@ -19,6 +19,7 @@ const config: Config = {
       },
       height: {
         '256': '64rem',
+        '128': '32rem',
       },
     },
   },
