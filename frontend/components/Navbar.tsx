@@ -1,11 +1,12 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input, Button, Menu, Avatar, Dropdown, Space } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { user_authenticated } from '@/store/Actions';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import { useCookies } from "react-cookie"
+import { user_profile, user_authenticated } from '@/store/Actions';
+import axios from 'axios';
 import {
   UserOutlined,
   LogoutOutlined,
@@ -15,12 +16,14 @@ import {
   SearchOutlined,
   LineChartOutlined,
 } from '@ant-design/icons';
+import Loading from './Loading';
 const { Search } = Input;
 
 
 const Navbar = () => {
   const router = useRouter()
   const dispatch = useDispatch()
+  const [mainLoading, setMainLoading] = useState(false)
   const [cookie, setCookie, removeCookie] = useCookies(["userAccessKey"])
   const isAuth = useSelector((state:any) => state.userAuth)
   console.log(isAuth.isAuth)
@@ -32,6 +35,36 @@ const Navbar = () => {
     removeCookie("userAccessKey");
     window.location.reload();
   }
+  async function checkUser() {
+    setMainLoading(true)
+    console.log("Cookie" + cookie.userAccessKey)
+    if(cookie.userAccessKey !== "undefined"){
+        try{
+            const res = await axios.get('http://127.0.0.1:8000/api/me/',{
+                headers: {
+                  Authorization: `Bearer ${cookie.userAccessKey}`,
+                  'Content-Type': 'application/json',
+                },
+              })
+            console.log(res.data)
+            dispatch(user_profile(res.data))
+            const isauthjson = {
+                isAuth:'True',
+            }
+            dispatch(user_authenticated(isauthjson))
+        }
+        catch(error){
+            console.log("unable to login")
+        }
+    }
+    else{
+      router.push('/')
+    }
+    setMainLoading(false)
+}
+  useEffect(() => {
+    checkUser()
+  }, [])
   const menu = (
     <Menu>
       <Menu.Item>
@@ -94,8 +127,15 @@ const Navbar = () => {
   );
   
   return (
-    
-    <nav className="bg-white border-gray-200 dark:bg-gray-800 sticky top-0 z-10">
+    <div>
+    {
+      mainLoading?(
+      <>
+        <Loading/>
+      </>
+      ):(
+      <>
+        <nav className="bg-white border-gray-200 dark:bg-gray-800 sticky top-0 z-10">
       <div className="max-w-screen-xl flex flex-wrap items-center shadow-md justify-between mx-auto p-4">
         <Link href="/">
           <div className='flex flex-row'>
@@ -173,6 +213,12 @@ const Navbar = () => {
       </div>
       </div>
     </nav>
+      </>
+      )
+    }
+    </div>
+    
+    
 
   )
 }

@@ -10,6 +10,7 @@ import { useCookies } from "react-cookie"
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation'
 import { user_profile, user_authenticated } from '@/store/Actions';
+import Loading from "@/components/Loading";
 
 
 
@@ -161,7 +162,7 @@ export default function Home() {
     {
       data.length === 0? (
       <>
-        Loading...
+        <Loading/>
       </>
       ) : (
       <div>
