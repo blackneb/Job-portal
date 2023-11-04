@@ -12,8 +12,10 @@ import axios from 'axios';
 
 const UploadResume = () => {
     const [fileList, setFileList] = useState([]);
+    const [loading, setLoading] = useState(false)
     const [cookie, setCookie] = useCookies(["userAccessKey"])
      const handleUpload = async () => {
+      setLoading(true)
        const formData = new FormData();
        fileList.forEach((file) => {
          formData.append('resume', file);
@@ -26,12 +28,14 @@ const UploadResume = () => {
              'Content-Type': 'multipart/form-data',
            },
          });
+         message.success('File upload Success.');
 
          // Handle the response as required
          console.log(response.data);
        } catch (error) {
          message.error('File upload failed. Please try again.');
        }
+       setLoading(false)
      };
 
      const handleChange = ({ file, fileList }:any) => {
@@ -57,7 +61,7 @@ const UploadResume = () => {
             <div className=' text-3xl font-bold flex justify-center mb-10'>
                 <h1>Upload Resume</h1>
             </div>
-            <div className='flex justify-center'>
+            <div className='flex flex-col items-center justify-center'>
             <Upload
             fileList={fileList}
             onChange={handleChange}
@@ -65,10 +69,28 @@ const UploadResume = () => {
             >
             <Button icon={<UploadOutlined />}>Select File</Button>
             </Upload>
-
-            <Button type="primary" onClick={handleUpload}>
-            Upload
-            </Button>
+            <div className='my-4'>
+            {loading ? (
+                        <Button 
+                            type="primary" 
+                            htmlType="submit"
+                            className="login-form-button"
+                            style={{backgroundColor:'blue', color:'white' }}
+                            loading>
+                        Uploading Resume
+                        </Button>
+                    ) : (
+                        <Button 
+                            type="primary" 
+                            htmlType="submit"
+                            className="login-form-button"
+                            style={{backgroundColor:'blue', color:'white' }} 
+                            onClick={handleUpload}
+                        >
+                        Upload Resume
+                        </Button>
+                    )}
+            </div>
             </div>            
         </div>
         </div>
