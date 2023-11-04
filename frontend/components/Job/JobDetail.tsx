@@ -5,6 +5,8 @@ import { Button, Descriptions, notification } from 'antd'
 import type { DescriptionsProps } from 'antd';
 import axios, { AxiosError } from 'axios';
 import { useCookies } from "react-cookie"
+import Loading from '../Loading';
+import { useRouter } from 'next/navigation';
 
 interface jobInterface {
     id: number;
@@ -25,6 +27,7 @@ interface jobInterface {
 }
 
 const JobDetail = ({id}:any) => {
+    const router = useRouter()
     const [cookie, setCookie] = useCookies(["userAccessKey"])
     const [data, setData] = useState<jobInterface>()
     const [items, setItems] = useState<DescriptionsProps['items']>([])
@@ -135,6 +138,7 @@ const JobDetail = ({id}:any) => {
         }
         catch(error){
             console.log(error)
+            router.push("/login")
         }
     }
     useEffect(() => {
@@ -145,7 +149,7 @@ const JobDetail = ({id}:any) => {
         {
             loading? (
             <>
-                Loading...
+                <Loading/>
             </>
             ):(
             <>

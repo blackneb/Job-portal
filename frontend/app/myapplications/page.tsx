@@ -6,6 +6,7 @@ import axios, { AxiosError } from 'axios';
 import { useCookies } from "react-cookie"
 import Image from 'next/image';
 import Link from 'next/link';
+import Loading from '@/components/Loading';
 
 
 type Job = {
@@ -85,16 +86,17 @@ const page = () => {
   return (
     <div className='flex flex justify-center min-h-screen'>
       <div>
-      < div className="shadow-md rounded ml-4 my-4 mb-8">
-          <p className="ml-4 font-semibold">My Jobs</p>
-        </div>
+      
         {
           data.length === 0? (
           <>
-            Loading...
+            <Loading/>
           </>
           ):(
           <>
+            < div className="shadow-md rounded ml-4 my-4 mb-8">
+              <p className="ml-4 font-semibold">My Jobs</p>
+            </div>
             <Table columns={columns} dataSource={data} />;
           </>
           )

@@ -1,12 +1,42 @@
 "use client";
-import React from 'react'
-import { Form, Input, Button, Upload } from 'antd';
+import React, { useState } from 'react'
+import { Form, Input, Button, Upload, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { UploadOutlined } from '@ant-design/icons';
+import { useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux';
+import { useCookies } from "react-cookie"
+import type { UploadProps } from 'antd';
+import axios from 'axios';
 
 
 const UploadResume = () => {
+    const [fileList, setFileList] = useState([]);
+    const [cookie, setCookie] = useCookies(["userAccessKey"])
+     const handleUpload = async () => {
+       const formData = new FormData();
+       fileList.forEach((file) => {
+         formData.append('resume', file);
+       });
+
+       try {
+         const response = await axios.put('http://127.0.0.1:8000/api/me/upload/resume/', formData, {
+           headers: {
+             Authorization:`Bearer ${cookie.userAccessKey}`,
+             'Content-Type': 'multipart/form-data',
+           },
+         });
+
+         // Handle the response as required
+         console.log(response.data);
+       } catch (error) {
+         message.error('File upload failed. Please try again.');
+       }
+     };
+
+     const handleChange = ({ file, fileList }:any) => {
+       setFileList(fileList);
+     };
     const onFinish = (values:any) => {
         console.log('Received values of form: ', values);
       };
@@ -28,29 +58,17 @@ const UploadResume = () => {
                 <h1>Upload Resume</h1>
             </div>
             <div className='flex justify-center'>
-                <Form
-                    name="login-form"
-                    className="login-form"
-                    initialValues={{ remember: true }}
-                    >
+            <Upload
+            fileList={fileList}
+            onChange={handleChange}
+            beforeUpload={() => false}
+            >
+            <Button icon={<UploadOutlined />}>Select File</Button>
+            </Upload>
 
-                    <Form.Item name="file" label="File">
-                        <Upload>
-                            <Button icon={<UploadOutlined />} size="small">
-                            Upload
-                            </Button>
-                        </Upload>
-                    </Form.Item>
-                    
-                    <Form.Item className='flex justify-center'>
-                        <Button
-                        htmlType="submit"
-                        className="login-form-button"
-                        >
-                        Upload
-                        </Button>
-                    </Form.Item>
-                </Form>
+            <Button type="primary" onClick={handleUpload}>
+            Upload
+            </Button>
             </div>            
         </div>
         </div>

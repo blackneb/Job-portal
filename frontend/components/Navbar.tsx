@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useCookies } from "react-cookie"
 import { user_profile, user_authenticated } from '@/store/Actions';
 import axios from 'axios';
+import Image from 'next/image'
 import {
   UserOutlined,
   LogoutOutlined,
@@ -139,7 +140,7 @@ const Navbar = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center shadow-md justify-between mx-auto p-4">
         <Link href="/">
           <div className='flex flex-row'>
-            <img src="https://flowbite.com/docs/images/logo.svg" className="h-8 mr-3" alt="Flowbite Logo" />
+            <Image src="/loggo.png" alt="Icon" width={50} height={50} />
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Job Portal</span>
           </div>
         </Link>
