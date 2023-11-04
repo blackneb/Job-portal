@@ -1,11 +1,16 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { Space, Table, Tag, notification } from 'antd';
+import { Space, Table, Tag, notification, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import axios, { AxiosError } from 'axios';
 import { useCookies } from "react-cookie"
 import Image from 'next/image';
 import Link from 'next/link';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+
+
+const { confirm } = Modal;
+
 
 interface DataType {
   key: string;
@@ -22,6 +27,47 @@ const page = () => {
   const url = "http://127.0.0.1:8000/api/me/jobs"
   const [cookie, setCookie] = useCookies(["userAccessKey"])
   const [data, setData] = useState([])
+  async function deleteJob(id:any) {
+    confirm({
+      title: `Are you sure delete Job ${id}?`,
+      icon: <ExclamationCircleFilled />,
+      content: 'Delete Full Content',
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      async onOk() {
+        try{
+          const response = await axios.delete(`http://127.0.0.1:8000/api/deletejob/${id}/`,{
+            headers: {
+              Authorization: `Bearer ${cookie.userAccessKey}`,
+              'Content-Type': 'application/json',
+            },
+          })
+          console.log(response.data)
+          notification.success({
+            message: "Job Deleted",
+            duration: 5,
+            onClose: () => {
+              console.log('Notification closed');
+            },
+          });
+        }
+        catch(error:any){
+          notification.error({
+            message: error.response.data.message,
+            duration: 5,
+            onClose: () => {
+              console.log('Notification closed');
+            },
+          });
+        }
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+    console.log("deleting job " + id)
+  }
   async function getData(){
     try{
       const response = await axios.get(url,{
@@ -32,21 +78,21 @@ const page = () => {
         })
         console.log(response.data)
         setData(response.data)
-  }
-  catch(error:any){
-      console.log(error.response)
-      notification.error({
-          message: error.response.data.error,
-          duration: 5,
-          onClose: () => {
-            console.log('Notification closed');
-          },
-        });
-  }
-  }
-  useEffect(() => {
-    getData()
-  }, [])
+    }
+    catch(error:any){
+        console.log(error.response)
+        notification.error({
+            message: error.response.data.error,
+            duration: 5,
+            onClose: () => {
+              console.log('Notification closed');
+            },
+          });
+    }
+    }
+    useEffect(() => {
+      getData()
+    }, [])
   const columns = [
     {
       title: 'ID',
@@ -94,7 +140,7 @@ const page = () => {
           <Link href={`/updatejob/${record.id}`}>
             <Image src="/update.png" alt="Icon" width={20} height={10} />
           </Link>
-          <Image src="/delete.png" alt="Icon" width={20} height={10} />
+          <Image src="/delete.png" alt="Icon" width={20} height={10} onClick={()=>deleteJob(record.id)} />
         </Space>
       ),
     },
