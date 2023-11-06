@@ -1,9 +1,12 @@
 'use client'
 import { Form, Input, Button, Descriptions, notification } from 'antd'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { LineChartOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useCookies } from "react-cookie"
+import { useSelector } from 'react-redux'
+import { useRouter } from 'next/navigation'
+import Profile from '@/components/Profile'
 
 interface dataInterface {
     avg_positions: number;
@@ -17,6 +20,8 @@ const page = () => {
     const [loading, setLoading] = useState(false)
     const [data, setdata] = useState<dataInterface>()
     const [cookie, setCookie] = useCookies(["userAccessKey"])
+    const router = useRouter()
+  const isAuth = useSelector((state:any) => state.userAuth)
     const onFinish = async (values:any) => {
         setLoading(true)
         console.log(values)
@@ -47,6 +52,11 @@ const page = () => {
         }
         setLoading(false)
     }
+  useEffect(() => {
+    if (!isAuth.isAuth){
+      router.push('/login')
+    }
+  }, [])
   return (
     <div>
         <div className='flex justify-center'>
