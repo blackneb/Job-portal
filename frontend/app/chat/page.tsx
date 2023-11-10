@@ -4,30 +4,17 @@ import React, { useState, useEffect } from 'react'
 
 const page = () => {
   const [inputMessage, setInputMessage] = useState('');
-  const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/');
+  const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/lobby/');
   useEffect(() => {
-    const connectWebSocket = async () => {
-      const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/');
-
-      // Wait for the WebSocket connection to open
-      await new Promise((resolve) => {
-        socket.onopen = resolve;
+    const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/lobby/');
+      socket.addEventListener('open', (event:any) => {
+        console.log('WebSocket connection opened:', event);
       });
-
-      console.log('WebSocket connected');
-
-      // Send a message to the server
-      socket.send('Hello from the client!');
-
-      // Wait for the server response
-      const response = await new Promise((resolve) => {
-        socket.onmessage = (event) => resolve(event.data);
+  
+      // Listen for messages
+      socket.addEventListener('message', (event:any) => {
+        console.log('WebSocket message received:', event.data);
       });
-
-      console.log(`Received from server: ${response}`);
-    };
-
-    connectWebSocket();
   }, []);
   const sendMessage = async () => {
     if (socket) {
@@ -40,11 +27,12 @@ const page = () => {
   };
 
   return (
-    <div className='flex justify-center h-screen'>
+    <div className='flex flex-col items-center justify-center'>
       <p>chat with me</p>
       <input
           type="text"
           value={inputMessage}
+          placeholder='type here'
           onChange={(e) => setInputMessage(e.target.value)}
         />
       <button onClick={sendMessage}>Send Message</button>
